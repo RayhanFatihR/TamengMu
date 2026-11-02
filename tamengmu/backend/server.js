@@ -1,6 +1,8 @@
+
 const express = require('express')
 const cors = require('cors')
 const pool = require('./db')
+const riwayatRoutes = require('./routes/riwayatRoutes')
 
 require('dotenv').config()
 
@@ -9,7 +11,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-// Halaman utama backend
+// Halaman utama
 app.get('/', (req, res) => {
     res.send('Backend TamengKu Berhasil Berjalan!')
 })
@@ -25,12 +27,14 @@ app.get('/test-db', async (req, res) => {
         })
     } catch (error) {
         console.error(error)
-
         res.status(500).json({
             message: 'Koneksi database gagal.'
         })
     }
 })
+
+// Route riwayat pemeriksaan
+app.use('/api/riwayat', riwayatRoutes)
 
 // Menjalankan server
 const PORT = process.env.PORT || 5000

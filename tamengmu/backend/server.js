@@ -6,6 +6,7 @@ const cors = require('cors')
 const pool = require('./db')
 const riwayatRoutes = require('./routes/riwayatRoutes')
 const authRoutes = require('./routes/authRoutes')
+const aiRoutes = require('./routes/aiRoutes')
 
 const app = express()
 
@@ -40,6 +41,8 @@ app.use('/api/auth', authRoutes)
 
 // Route riwayat pemeriksaan
 app.use('/api/riwayat', riwayatRoutes)
+
+app.use('/api/ai', aiRoutes)
 
 const PORT = process.env.PORT || 5000
 

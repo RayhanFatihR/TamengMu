@@ -1,22 +1,23 @@
 
+require('dotenv').config()
+
 const express = require('express')
 const cors = require('cors')
 const pool = require('./db')
 const riwayatRoutes = require('./routes/riwayatRoutes')
-
-require('dotenv').config()
+const authRoutes = require('./routes/authRoutes')
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
 
-// Halaman utama
+// Halaman utama backend
 app.get('/', (req, res) => {
     res.send('Backend TamengKu Berhasil Berjalan!')
 })
 
-// Tes koneksi database
+// Menguji koneksi database
 app.get('/test-db', async (req, res) => {
     try {
         const result = await pool.query('SELECT NOW()')
@@ -27,16 +28,19 @@ app.get('/test-db', async (req, res) => {
         })
     } catch (error) {
         console.error(error)
+
         res.status(500).json({
             message: 'Koneksi database gagal.'
         })
     }
 })
 
+// Route autentikasi
+app.use('/api/auth', authRoutes)
+
 // Route riwayat pemeriksaan
 app.use('/api/riwayat', riwayatRoutes)
 
-// Menjalankan server
 const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {

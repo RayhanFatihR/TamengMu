@@ -2,27 +2,96 @@
 import { useState } from 'react'
 import CheckPage from './pages/CheckPage'
 import HistoryPage from './pages/HistoryPage'
-import './App.css'
 import EducationPage from './pages/EducationPage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+
+import {
+  getCurrentUser,
+  isLoggedIn,
+  logoutUser
+} from './services/authService'
+
+import './App.css'
 
 function App() {
   const [halaman, setHalaman] = useState('beranda')
 
-  // Halaman pemeriksaan dan riwayat
+  // Memeriksa sesi login ketika aplikasi dibuka
+  const [user, setUser] = useState(() => {
+    return isLoggedIn() ? getCurrentUser() : null
+  })
+
+  // Berpindah ke halaman riwayat
+  function bukaRiwayat() {
+    if (user) {
+      setHalaman('history')
+    } else {
+      setHalaman('login')
+    }
+  }
+
+  // Login berhasil
+  function handleLogin(dataUser) {
+    setUser(dataUser)
+    setHalaman('beranda')
+  }
+
+  // Register berhasil
+  function handleRegister(dataUser) {
+    setUser(dataUser)
+    setHalaman('beranda')
+  }
+
+  // Menggunakan aplikasi sebagai tamu
+  function handleGuest() {
+    setUser(null)
+    setHalaman('beranda')
+  }
+
+  // Logout
+  function handleLogout() {
+    logoutUser()
+    setUser(null)
+    setHalaman('beranda')
+  }
+
+  // Halaman Login
+  if (halaman === 'login') {
+    return (
+      <LoginPage
+        onLogin={handleLogin}
+        onGoRegister={() => setHalaman('register')}
+        onGuest={handleGuest}
+      />
+    )
+  }
+
+  // Halaman Register
+  if (halaman === 'register') {
+    return (
+      <RegisterPage
+        onRegister={handleRegister}
+        onGoLogin={() => setHalaman('login')}
+        onGuest={handleGuest}
+      />
+    )
+  }
+
+  // Halaman selain beranda
   if (halaman !== 'beranda') {
     return (
       <>
-        
         <nav className="navbar bg-white shadow-sm py-3">
           <div className="container">
             <span className="navbar-brand fw-bold fs-3 text-primary">
               TamengKu
             </span>
 
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 flex-wrap">
               <button
                 className="btn btn-outline-primary rounded-pill"
-                onClick={() => setHalaman('history')}
+                onClick={bukaRiwayat}
               >
                 Riwayat
               </button>
@@ -40,10 +109,25 @@ function App() {
               >
                 ← Beranda
               </button>
+
+              {user ? (
+                <button
+                  className="btn btn-outline-danger rounded-pill"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              ) : (
+                <button
+                  className="btn btn-primary rounded-pill"
+                  onClick={() => setHalaman('login')}
+                >
+                  Login
+                </button>
+              )}
             </div>
           </div>
         </nav>
-
 
         {halaman === 'check' && <CheckPage />}
 
@@ -53,7 +137,7 @@ function App() {
           />
         )}
 
-        {halaman === 'history' && (
+        {halaman === 'history' && user && (
           <HistoryPage
             onKembali={() => setHalaman('beranda')}
             onPeriksaLagi={() => setHalaman('check')}
@@ -83,6 +167,7 @@ function App() {
 
           <div className="collapse navbar-collapse" id="navbarMenu">
             <ul className="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+
               <li className="nav-item">
                 <a className="nav-link" href="#beranda">
                   Beranda
@@ -104,7 +189,7 @@ function App() {
               <li className="nav-item">
                 <button
                   className="btn btn-outline-primary rounded-pill px-4"
-                  onClick={() => setHalaman('history')}
+                  onClick={bukaRiwayat}
                 >
                   Riwayat
                 </button>
@@ -119,6 +204,45 @@ function App() {
                 </button>
               </li>
 
+              {user ? (
+                <>
+                  <li className="nav-item">
+                    <span className="text-secondary small">
+                      Halo, {user.nama}
+                    </span>
+                  </li>
+
+                  <li className="nav-item">
+                    <button
+                      className="btn btn-outline-danger rounded-pill px-4"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="nav-item">
+                    <button
+                      className="btn btn-outline-primary rounded-pill px-4"
+                      onClick={() => setHalaman('login')}
+                    >
+                      Login
+                    </button>
+                  </li>
+
+                  <li className="nav-item">
+                    <button
+                      className="btn btn-primary rounded-pill px-4"
+                      onClick={() => setHalaman('register')}
+                    >
+                      Daftar
+                    </button>
+                  </li>
+                </>
+              )}
+
               <li className="nav-item">
                 <button
                   className="btn btn-primary rounded-pill px-4"
@@ -127,6 +251,7 @@ function App() {
                   Mulai Periksa
                 </button>
               </li>
+
             </ul>
           </div>
         </div>

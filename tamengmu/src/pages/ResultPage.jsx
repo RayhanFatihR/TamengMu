@@ -1,5 +1,11 @@
 
-function ResultPage({ jenis, data, hasil, onKembali }) {
+function ResultPage({
+  jenis,
+  data,
+  hasil,
+  pesanPenyimpanan,
+  onKembali
+}) {
   // Menentukan warna berdasarkan status
   let warna = 'secondary'
   let ikon = '🔎'
@@ -18,7 +24,7 @@ function ResultPage({ jenis, data, hasil, onKembali }) {
         <h2 className="fw-bold">Hasil Pemeriksaan</h2>
 
         <p className="text-secondary">
-          Berikut hasil analisis awal TamengMu.
+          Berikut hasil analisis awal TamengKu.
         </p>
       </div>
 
@@ -72,6 +78,17 @@ function ResultPage({ jenis, data, hasil, onKembali }) {
               </li>
             ))}
           </ul>
+
+          {/* Status Penyimpanan */}
+          {pesanPenyimpanan && (
+            <div className={`alert ${
+              pesanPenyimpanan.includes('berhasil disimpan')
+                ? 'alert-success'
+                : 'alert-warning'
+            } mt-4`}>
+              {pesanPenyimpanan}
+            </div>
+          )}
 
           {/* Peringatan */}
           <div className="alert alert-warning mt-4">

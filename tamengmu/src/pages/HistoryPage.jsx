@@ -1,29 +1,71 @@
 
-import { useState } from 'react'
-
-const STORAGE_KEY = 'tamengmu_riwayat'
+import { useState, useEffect } from 'react'
+import {
+  getRiwayat,
+  hapusRiwayat as hapusRiwayatAPI
+} from '../services/riwayatService'
 
 function HistoryPage({ onKembali, onPeriksaLagi }) {
-  const [riwayat, setRiwayat] = useState(() => {
+  const [riwayat, setRiwayat] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  // Mengambil riwayat dari backend
+  async function ambilRiwayat() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []
-    } catch {
-      return []
+      setLoading(true)
+      setError('')
+
+      const hasil = await getRiwayat()
+      setRiwayat(hasil)
+    } catch (error) {
+      console.error(error)
+      setError('Gagal mengambil riwayat pemeriksaan.')
+    } finally {
+      setLoading(false)
     }
-  })
+  }
+
+  // Mengambil data saat halaman dibuka
+  useEffect(() => {
+    ambilRiwayat()
+  }, [])
 
   // Menghapus satu riwayat
-  function hapusRiwayat(id) {
-    const riwayatBaru = riwayat.filter(item => item.id !== id)
+  async function hapusRiwayat(id) {
+    try {
+      await hapusRiwayatAPI(id)
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(riwayatBaru))
-    setRiwayat(riwayatBaru)
+      setRiwayat(
+        riwayat.filter(item => item.id !== id)
+      )
+    } catch (error) {
+      console.error(error)
+      alert('Gagal menghapus riwayat.')
+    }
   }
 
   // Menghapus semua riwayat
-  function hapusSemuaRiwayat() {
-    localStorage.removeItem(STORAGE_KEY)
-    setRiwayat([])
+  async function hapusSemuaRiwayat() {
+    const konfirmasi = window.confirm(
+      'Apakah kamu yakin ingin menghapus semua riwayat?'
+    )
+
+    if (!konfirmasi) return
+
+    try {
+      await Promise.all(
+        riwayat.map(item => hapusRiwayatAPI(item.id))
+      )
+
+      setRiwayat([])
+    } catch (error) {
+      console.error(error)
+      alert('Sebagian atau seluruh riwayat gagal dihapus.')
+
+      // Memuat ulang data dari database
+      ambilRiwayat()
+    }
   }
 
   // Mengatur warna status
@@ -58,12 +100,39 @@ function HistoryPage({ onKembali, onPeriksaLagi }) {
           )}
         </div>
 
-        {riwayat.length === 0 ? (
+        {/* Tampilan loading */}
+        {loading ? (
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="text-secondary mt-3">
+              Memuat riwayat pemeriksaan...
+            </p>
+          </div>
+
+        ) : error ? (
+          /* Tampilan error */
+          <div className="alert alert-danger text-center">
+            {error}
+
+            <button
+              className="btn btn-outline-danger btn-sm d-block mx-auto mt-3"
+              onClick={ambilRiwayat}
+            >
+              Coba Lagi
+            </button>
+          </div>
+
+        ) : riwayat.length === 0 ? (
+          /* Tampilan jika belum ada riwayat */
           <div className="card border-0 shadow-sm rounded-4 text-center p-5">
             <div className="display-3">📋</div>
+
             <h5 className="fw-bold mt-3">
               Belum Ada Riwayat
             </h5>
+
             <p className="text-secondary">
               Pemeriksaan yang kamu lakukan akan muncul di sini.
             </p>
@@ -75,7 +144,9 @@ function HistoryPage({ onKembali, onPeriksaLagi }) {
               Mulai Pemeriksaan
             </button>
           </div>
+
         ) : (
+          /* Menampilkan daftar riwayat */
           riwayat.map(item => (
             <div
               className="card border-0 shadow-sm rounded-4 mb-3"
@@ -134,8 +205,8 @@ function HistoryPage({ onKembali, onPeriksaLagi }) {
       </div>
 
       <div className="alert alert-info mt-4 mx-auto" style={{ maxWidth: '850px' }}>
-        <strong>Privasi:</strong> Riwayat disimpan di penyimpanan lokal
-        browser ini. Menghapus data browser dapat menghilangkan riwayat.
+        <strong>Privasi:</strong> Riwayat pemeriksaan disimpan di database
+        server TamengKu, bukan hanya di penyimpanan lokal browser.
       </div>
     </div>
   )

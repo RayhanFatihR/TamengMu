@@ -1,53 +1,88 @@
+
 const { GoogleGenAI } = require('@google/genai')
 
-let ai
+const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+})
 
 async function analisisPesan(pesan) {
     if (!pesan || !pesan.trim()) {
         throw new Error('Pesan tidak boleh kosong.')
     }
 
-    // Membuat koneksi ke Gemini
-    if (!ai) {
-        ai = new GoogleGenAI({
-            apiKey: process.env.GEMINI_API_KEY
-        })
-    }
-
     const response = await ai.models.generateContent({
-        model: 'gemini-flash-latest',
+        model: 'gemini-3.5-flash-lite',
 
         contents: `
             Kamu adalah TamengKu, asisten AI edukatif
-            yang membantu masyarakat Indonesia mengenali
+            untuk membantu masyarakat Indonesia mengenali
             potensi penipuan digital.
 
-            Analisis pesan berikut berdasarkan:
-            1. Janji hadiah atau uang yang tidak masuk akal.
+            Analisis pesan berikut:
+            ${pesan}
+
+            Perhatikan:
+            1. Janji hadiah atau uang tidak masuk akal.
             2. Permintaan OTP, PIN, password, atau data pribadi.
-            3. Tautan yang mencurigakan.
+            3. Tautan mencurigakan.
             4. Tekanan agar korban segera bertindak.
             5. Penyamaran sebagai bank, kurir, atau instansi.
 
-            Gunakan bahasa Indonesia yang sederhana
-            dan mudah dipahami masyarakat umum.
+            Tentukan status berdasarkan bukti dalam pesan.
+            Jangan menyatakan pesan pasti aman.
+            Gunakan bahasa Indonesia sederhana.
+            Jika bukti tidak cukup, pilih Belum Terindikasi.
+            Jangan mengarang indikator yang tidak ditemukan.
+        `,
 
-            Berikan hasil dengan susunan:
-            - Status: Belum Terindikasi, Waspada, atau Bahaya.
-            - Alasan: Jelaskan indikator yang ditemukan.
-            - Saran: Berikan tindakan yang sebaiknya dilakukan.
+        config: {
+            responseMimeType: 'application/json',
 
-            Jangan menyatakan pesan pasti aman hanya karena
-            tidak menemukan tanda penipuan.
-
-            Hasil analisis adalah indikasi, bukan kepastian.
-
-            Pesan yang harus dianalisis:
-            ${pesan}
-        `
+            responseSchema: {
+                type: 'OBJECT',
+                properties: {
+                    status: {
+                        type: 'STRING',
+                        enum: [
+                            'Belum Terindikasi',
+                            'Waspada',
+                            'Bahaya'
+                        ]
+                    },
+                    alasan: {
+                        type: 'ARRAY',
+                        items: {
+                            type: 'STRING'
+                        }
+                    },
+                    saran: {
+                        type: 'ARRAY',
+                        items: {
+                            type: 'STRING'
+                        }
+                    },
+                    catatan: {
+                        type: 'STRING'
+                    }
+                },
+                required: [
+                    'status',
+                    'alasan',
+                    'saran',
+                    'catatan'
+                ],
+                propertyOrdering: [
+                    'status',
+                    'alasan',
+                    'saran',
+                    'catatan'
+                ]
+            }
+        }
     })
 
-    return response.text
+    // Mengubah hasil JSON dari Gemini menjadi object JavaScript
+    return JSON.parse(response.text)
 }
 
 module.exports = {

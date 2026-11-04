@@ -1,10 +1,10 @@
 
 import { useState } from 'react'
 import ResultPage from './ResultPage'
-import analyzeInput from '../services/analyzeInput'
 import recognizeImage from '../services/ocrService'
 import { simpanRiwayat } from '../services/riwayatService'
 import { isLoggedIn } from '../services/authService'
+import './CheckPage.css'
 
 function CheckPage() {
     const [jenisPemeriksaan, setJenisPemeriksaan] = useState('pesan')
@@ -15,6 +15,14 @@ function CheckPage() {
     const [loadingPeriksa, setLoadingPeriksa] = useState(false)
     const [error, setError] = useState('')
     const [pesanPenyimpanan, setPesanPenyimpanan] = useState('')
+
+    function handleJenisChange(jenis) {
+        setJenisPemeriksaan(jenis)
+        setPesan('')
+        setHasil(null)
+        setError('')
+        setPesanPenyimpanan('')
+    }
 
     // Membaca gambar menggunakan OCR
     async function handleImageChange(e) {
@@ -35,6 +43,7 @@ function CheckPage() {
         }
 
         setPesan('')
+        setHasil(null)
         setError('')
         setPesanPenyimpanan('')
         setLoadingOCR(true)
@@ -47,30 +56,20 @@ function CheckPage() {
             } else {
                 setPesan(hasilTeks)
             }
-
         } catch (error) {
             setError('Gagal membaca gambar. Silakan coba kembali.')
             console.error(error)
-
         } finally {
             setLoadingOCR(false)
         }
     }
 
-    // Mengganti jenis pemeriksaan
-    function handleJenisChange(jenis) {
-        setJenisPemeriksaan(jenis)
-        setPesan('')
-        setHasil(null)
-        setError('')
-        setPesanPenyimpanan('')
-    }
-
-    // Menjalankan pemeriksaan
+    // Menjalankan pemeriksaan menggunakan Gemini AI
     async function handlePeriksa(e) {
         e.preventDefault()
 
         setError('')
+        setHasil(null)
         setPesanPenyimpanan('')
 
         if (!pesan.trim()) {
@@ -81,11 +80,6 @@ function CheckPage() {
         setLoadingPeriksa(true)
 
         try {
-            const jenisAnalisis =
-                jenisPemeriksaan === 'tautan' ? 'tautan' : 'pesan'
-
-            const hasilAnalisis = analyzeInput(pesan, jenisAnalisis)
-
             const namaJenis =
                 jenisPemeriksaan === 'pesan'
                     ? 'Pesan'
@@ -93,23 +87,44 @@ function CheckPage() {
                         ? 'Tautan'
                         : 'Screenshot'
 
-            // Menampilkan hasil pemeriksaan
+            const response = await fetch(
+                'http://localhost:5000/api/ai/analisis',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pesan: pesan
+                    })
+                }
+            )
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || 'Gagal melakukan analisis AI.'
+                )
+            }
+
+            const hasilAnalisis = data.hasil
+
             setHasil(hasilAnalisis)
 
-            // Jika pengguna sudah login, simpan ke PostgreSQL
+            // Simpan riwayat jika pengguna sudah login
             if (isLoggedIn()) {
                 try {
                     await simpanRiwayat({
                         jenis: namaJenis,
                         data: pesan,
                         status: hasilAnalisis.status,
-                        alasan: hasilAnalisis.alasan
+                        alasan: hasilAnalisis.alasan.join('\n')
                     })
 
                     setPesanPenyimpanan(
                         'Hasil pemeriksaan berhasil disimpan ke riwayat.'
                     )
-
                 } catch (error) {
                     console.error('Gagal menyimpan riwayat:', error)
 
@@ -118,212 +133,318 @@ function CheckPage() {
                     )
                 }
             }
-
         } catch (error) {
-            console.error(error)
-            setError('Terjadi kesalahan saat melakukan pemeriksaan.')
+            console.error('AI Analysis Error:', error)
 
+            setError(
+                error.message ||
+                'Terjadi kesalahan saat melakukan pemeriksaan.'
+            )
         } finally {
             setLoadingPeriksa(false)
         }
     }
 
-    // Menampilkan hasil pemeriksaan
-    if (hasil) {
-        const namaJenis =
-            jenisPemeriksaan === 'pesan'
-                ? 'Pesan'
-                : jenisPemeriksaan === 'tautan'
-                    ? 'Tautan'
-                    : 'Screenshot'
-
-        return (
-            <ResultPage
-                jenis={namaJenis}
-                data={pesan}
-                hasil={hasil}
-                pesanPenyimpanan={pesanPenyimpanan}
-                onKembali={() => {
-                    setHasil(null)
-                    setPesan('')
-                    setError('')
-                    setPesanPenyimpanan('')
-                }}
-            />
-        )
-    }
-
     return (
-        <div className="container py-5">
-            <div className="text-center mb-5">
-                <h2 className="fw-bold">
-                    Periksa Pesan Mencurigakan
+        <div className="check-page">
+
+            {/* Header halaman */}
+            <div className="check-header text-center">
+                <div className="check-header-icon">
+                    <i className="bi bi-shield-check"></i>
+                </div>
+
+                <span className="check-eyebrow">
+                    TAMENGKU SECURITY CHECK
+                </span>
+
+                <h2>
+                    Periksa Sebelum <span>Percaya.</span>
                 </h2>
 
-                <p className="text-secondary">
-                    Masukkan informasi yang ingin kamu periksa.
+                <p>
+                    Bantu kenali potensi penipuan digital dengan
+                    memeriksa pesan, tautan, atau screenshot mencurigakan.
                 </p>
             </div>
 
-            <div
-                className="card shadow-sm border-0 rounded-4 mx-auto"
-                style={{ maxWidth: '750px' }}
-            >
-                <div className="card-body p-4 p-md-5">
-                    <h5 className="fw-bold mb-3">
-                        Pilih Jenis Pemeriksaan
-                    </h5>
+            {/* Form pemeriksaan */}
+            <div className="check-card">
 
-                    <div className="d-flex flex-wrap gap-2 mb-4">
-                        <button
-                            type="button"
-                            className={`btn ${
-                                jenisPemeriksaan === 'pesan'
-                                    ? 'btn-primary'
-                                    : 'btn-outline-primary'
-                            }`}
-                            onClick={() => handleJenisChange('pesan')}
-                        >
-                            💬 Pesan
-                        </button>
-
-                        <button
-                            type="button"
-                            className={`btn ${
-                                jenisPemeriksaan === 'tautan'
-                                    ? 'btn-primary'
-                                    : 'btn-outline-primary'
-                            }`}
-                            onClick={() => handleJenisChange('tautan')}
-                        >
-                            🔗 Tautan
-                        </button>
-
-                        <button
-                            type="button"
-                            className={`btn ${
-                                jenisPemeriksaan === 'gambar'
-                                    ? 'btn-primary'
-                                    : 'btn-outline-primary'
-                            }`}
-                            onClick={() => handleJenisChange('gambar')}
-                        >
-                            📷 Screenshot
-                        </button>
+                <div className="check-card-heading">
+                    <div>
+                        <span className="check-step">LANGKAH 01</span>
+                        <h4>Pilih jenis pemeriksaan</h4>
+                        <p>Pilih informasi yang ingin kamu periksa.</p>
                     </div>
 
-                    <form onSubmit={handlePeriksa}>
-                        {/* Pemeriksaan pesan */}
+                    <div className="check-heading-icon">
+                        <i className="bi bi-search"></i>
+                    </div>
+                </div>
+
+                {/* Pilihan pemeriksaan */}
+                <div className="check-type-list">
+
+                    <button
+                        type="button"
+                        className={`check-type ${
+                            jenisPemeriksaan === 'pesan' ? 'active' : ''
+                        }`}
+                        onClick={() => handleJenisChange('pesan')}
+                    >
+                        <span className="check-type-icon">
+                            <i className="bi bi-chat-left-text"></i>
+                        </span>
+
+                        <span className="check-type-text">
+                            <strong>Pesan</strong>
+                            <small>SMS atau chat</small>
+                        </span>
+
                         {jenisPemeriksaan === 'pesan' && (
-                            <div className="mb-3">
-                                <label className="form-label fw-semibold">
-                                    Masukkan pesan yang mencurigakan
-                                </label>
-
-                                <textarea
-                                    className="form-control"
-                                    rows="6"
-                                    placeholder="Contoh: Selamat! Anda memenangkan hadiah..."
-                                    value={pesan}
-                                    onChange={(e) => setPesan(e.target.value)}
-                                    required
-                                />
-                            </div>
+                            <i className="bi bi-check-circle-fill check-selected"></i>
                         )}
+                    </button>
 
-                        {/* Pemeriksaan tautan */}
+                    <button
+                        type="button"
+                        className={`check-type ${
+                            jenisPemeriksaan === 'tautan' ? 'active' : ''
+                        }`}
+                        onClick={() => handleJenisChange('tautan')}
+                    >
+                        <span className="check-type-icon">
+                            <i className="bi bi-link-45deg"></i>
+                        </span>
+
+                        <span className="check-type-text">
+                            <strong>Tautan</strong>
+                            <small>URL website</small>
+                        </span>
+
                         {jenisPemeriksaan === 'tautan' && (
-                            <div className="mb-3">
-                                <label className="form-label fw-semibold">
-                                    Masukkan tautan website
-                                </label>
+                            <i className="bi bi-check-circle-fill check-selected"></i>
+                        )}
+                    </button>
+
+                    <button
+                        type="button"
+                        className={`check-type ${
+                            jenisPemeriksaan === 'gambar' ? 'active' : ''
+                        }`}
+                        onClick={() => handleJenisChange('gambar')}
+                    >
+                        <span className="check-type-icon">
+                            <i className="bi bi-image"></i>
+                        </span>
+
+                        <span className="check-type-text">
+                            <strong>Screenshot</strong>
+                            <small>Gambar percakapan</small>
+                        </span>
+
+                        {jenisPemeriksaan === 'gambar' && (
+                            <i className="bi bi-check-circle-fill check-selected"></i>
+                        )}
+                    </button>
+
+                </div>
+
+                <div className="check-divider"></div>
+
+                <form onSubmit={handlePeriksa}>
+
+                    <div className="check-input-heading">
+                        <span className="check-step">LANGKAH 02</span>
+                        <h4>
+                            {jenisPemeriksaan === 'pesan'
+                                ? 'Masukkan pesan'
+                                : jenisPemeriksaan === 'tautan'
+                                    ? 'Masukkan tautan website'
+                                    : 'Unggah screenshot'}
+                        </h4>
+                    </div>
+
+                    {/* Input pesan */}
+                    {jenisPemeriksaan === 'pesan' && (
+                        <div className="check-field">
+                            <textarea
+                                className="form-control check-textarea"
+                                rows="6"
+                                placeholder="Tempelkan pesan yang ingin kamu periksa di sini..."
+                                value={pesan}
+                                onChange={(e) => {
+                                    setPesan(e.target.value)
+                                    setHasil(null)
+                                    setError('')
+                                }}
+                                required
+                            />
+
+                            <div className="check-field-footer">
+                                <span>
+                                    <i className="bi bi-info-circle me-1"></i>
+                                    Masukkan isi pesan secara lengkap.
+                                </span>
+                                <span>{pesan.length} karakter</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Input tautan */}
+                    {jenisPemeriksaan === 'tautan' && (
+                        <div className="check-field">
+                            <div className="check-url-input">
+                                <i className="bi bi-link-45deg"></i>
 
                                 <input
                                     type="url"
                                     className="form-control"
                                     placeholder="https://contoh-website.com"
                                     value={pesan}
-                                    onChange={(e) => setPesan(e.target.value)}
+                                    onChange={(e) => {
+                                        setPesan(e.target.value)
+                                        setHasil(null)
+                                        setError('')
+                                    }}
                                     required
                                 />
                             </div>
-                        )}
 
-                        {/* Pemeriksaan screenshot */}
-                        {jenisPemeriksaan === 'gambar' && (
-                            <div className="mb-3">
-                                <label className="form-label fw-semibold">
-                                    Unggah screenshot percakapan
-                                </label>
+                            <div className="check-field-footer">
+                                <span>
+                                    <i className="bi bi-info-circle me-1"></i>
+                                    Jangan membuka tautan mencurigakan.
+                                </span>
+                            </div>
+                        </div>
+                    )}
 
+                    {/* Input screenshot */}
+                    {jenisPemeriksaan === 'gambar' && (
+                        <div className="check-field">
+
+                            <label className="check-upload-area">
                                 <input
                                     type="file"
-                                    className="form-control"
                                     accept="image/png, image/jpeg, image/webp"
                                     onChange={handleImageChange}
                                 />
 
-                                <small className="text-secondary">
-                                    Format gambar: JPG, PNG, atau WEBP.
-                                    Maksimal 5 MB.
-                                </small>
+                                <div className="check-upload-icon">
+                                    <i className="bi bi-cloud-arrow-up"></i>
+                                </div>
 
-                                {loadingOCR && (
-                                    <div className="alert alert-info mt-3">
-                                        <div className="spinner-border spinner-border-sm me-2" />
-                                        Sedang membaca tulisan dari gambar...
+                                <strong>
+                                    Klik untuk mengunggah gambar
+                                </strong>
+
+                                <span>
+                                    Pilih screenshot percakapan yang ingin diperiksa.
+                                </span>
+
+                                <small>JPG, PNG, atau WEBP · Maksimal 5 MB</small>
+                            </label>
+
+                            {loadingOCR && (
+                                <div className="check-loading">
+                                    <div className="spinner-border spinner-border-sm"></div>
+                                    <span>Sedang membaca tulisan dari gambar...</span>
+                                </div>
+                            )}
+
+                            {pesan && !loadingOCR && (
+                                <div className="check-ocr-result">
+                                    <div className="check-ocr-heading">
+                                        <i className="bi bi-file-earmark-text"></i>
+                                        <strong>Hasil Pembacaan OCR</strong>
                                     </div>
-                                )}
 
-                                {pesan && !loadingOCR && (
-                                    <div className="mt-4">
-                                        <label className="form-label fw-semibold">
-                                            Hasil Pembacaan OCR
-                                        </label>
+                                    <textarea
+                                        className="form-control check-textarea"
+                                        rows="6"
+                                        value={pesan}
+                                        onChange={(e) => {
+                                            setPesan(e.target.value)
+                                            setHasil(null)
+                                            setError('')
+                                        }}
+                                    />
 
-                                        <textarea
-                                            className="form-control"
-                                            rows="6"
-                                            value={pesan}
-                                            onChange={(e) => setPesan(e.target.value)}
-                                        />
+                                    <small>
+                                        Periksa kembali teks hasil pembacaan
+                                        sebelum melanjutkan.
+                                    </small>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
-                                        <small className="text-secondary">
-                                            Periksa dan perbaiki teks jika ada kesalahan
-                                            sebelum melanjutkan.
-                                        </small>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                    {/* Pesan error */}
+                    {error && (
+                        <div className="check-error">
+                            <i className="bi bi-exclamation-circle-fill"></i>
+                            {error}
+                        </div>
+                    )}
 
-                        {error && (
-                            <div className="alert alert-danger">
-                                {error}
-                            </div>
-                        )}
-
-                        <div className="alert alert-info mt-3">
-                            <strong>Tips keamanan:</strong>
-                            <br />
-                            Jangan pernah membagikan password, PIN,
-                            atau kode OTP.
+                    {/* Tips keamanan */}
+                    <div className="check-security-tip">
+                        <div className="check-tip-icon">
+                            <i className="bi bi-shield-lock"></i>
                         </div>
 
-                        <button
-                            type="submit"
-                            className="btn btn-primary w-100 py-3"
-                            disabled={loadingOCR || loadingPeriksa}
-                        >
-                            {loadingPeriksa
-                                ? 'Sedang Memeriksa...'
-                                : loadingOCR
-                                    ? 'Sedang Membaca Gambar...'
-                                    : 'Periksa Sekarang'}
-                        </button>
-                    </form>
-                </div>
+                        <div>
+                            <strong>Jaga keamanan data pribadimu</strong>
+                            <p>
+                                Jangan pernah membagikan password, PIN,
+                                atau kode OTP kepada siapa pun.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Tombol pemeriksaan */}
+                    <button
+                        type="submit"
+                        className="check-submit"
+                        disabled={loadingOCR || loadingPeriksa}
+                    >
+                        {loadingPeriksa ? (
+                            <>
+                                <span className="spinner-border spinner-border-sm me-2"></span>
+                                Sedang menganalisis...
+                            </>
+                        ) : loadingOCR ? (
+                            'Sedang membaca gambar...'
+                        ) : (
+                            <>
+                                Periksa Sekarang
+                                <i className="bi bi-arrow-right"></i>
+                            </>
+                        )}
+                    </button>
+
+                    <p className="check-disclaimer">
+                        <i className="bi bi-info-circle me-1"></i>
+                        Hasil analisis AI merupakan informasi edukatif,
+                        bukan jaminan keamanan mutlak.
+                    </p>
+
+                </form>
             </div>
+
+            {/* Hasil analisis Gemini */}
+            {hasil && (
+                <ResultPage
+                    jenis={jenisPemeriksaan}
+                    data={pesan}
+                    hasil={hasil}
+                    pesanPenyimpanan={pesanPenyimpanan}
+                    onKembali={() => setHasil(null)}
+                />
+            )}
+
         </div>
     )
 }

@@ -1,115 +1,223 @@
+import './ResultPage.css'
 
 function ResultPage({
-  jenis,
-  data,
-  hasil,
-  pesanPenyimpanan,
-  onKembali
+    jenis,
+    data,
+    hasil,
+    pesanPenyimpanan,
+    onKembali
 }) {
-  // Menentukan warna berdasarkan status
-  let warna = 'secondary'
-  let ikon = '🔎'
+    // Menentukan tampilan berdasarkan status
+    let statusClass = 'safe'
+    let ikon = 'bi-shield-check'
+    let judul = 'Belum Terindikasi'
+    let deskripsi = 'Belum ditemukan indikasi mencurigakan dari informasi yang diperiksa.'
 
-  if (hasil.status === 'Bahaya') {
-    warna = 'danger'
-    ikon = '🚨'
-  } else if (hasil.status === 'Waspada') {
-    warna = 'warning'
-    ikon = '⚠️'
-  }
+    if (hasil.status === 'Bahaya') {
+        statusClass = 'danger'
+        ikon = 'bi-shield-exclamation'
+        judul = 'Berpotensi Berbahaya!'
+        deskripsi = 'Ditemukan indikasi yang perlu kamu waspadai. Jangan melakukan tindakan sebelum memastikan kebenarannya.'
+    } else if (hasil.status === 'Waspada') {
+        statusClass = 'warning'
+        ikon = 'bi-exclamation-triangle'
+        judul = 'Tetap Berhati-hati!'
+        deskripsi = 'Terdapat beberapa hal yang perlu diperhatikan dari informasi yang kamu periksa.'
+    }
 
-  return (
-    <div className="container py-5">
-      <div className="text-center mb-4">
-        <h2 className="fw-bold">Hasil Pemeriksaan</h2>
+    const alasan = Array.isArray(hasil.alasan)
+        ? hasil.alasan
+        : hasil.alasan
+            ? [hasil.alasan]
+            : []
 
-        <p className="text-secondary">
-          Berikut hasil analisis awal TamengKu.
-        </p>
-      </div>
+    const saran = Array.isArray(hasil.saran)
+        ? hasil.saran
+        : hasil.saran
+            ? [hasil.saran]
+            : []
 
-      <div
-        className="card border-0 shadow-sm rounded-4 mx-auto"
-        style={{ maxWidth: '750px' }}
-      >
-        <div className="card-body p-4 p-md-5">
+    return (
+        <div className="result-page">
 
-          {/* Status Hasil */}
-          <div className="text-center mb-4">
-            <div className="display-1">{ikon}</div>
+            {/* Header */}
+            <div className="result-header text-center">
+                <span className="result-eyebrow">
+                    TAMENGKU SECURITY REPORT
+                </span>
 
-            <span className={`badge bg-${warna} text-${warna === 'warning' ? 'dark' : 'white'} fs-6 px-4 py-2`}>
-              {hasil.status.toUpperCase()}
-            </span>
+                <h2>Hasil Pemeriksaan</h2>
 
-            <h4 className="fw-bold mt-3">
-              {hasil.status === 'Bahaya'
-                ? 'Berpotensi berbahaya!'
-                : hasil.status === 'Waspada'
-                  ? 'Tetap berhati-hati!'
-                  : 'Belum ditemukan indikasi mencurigakan'}
-            </h4>
-
-            <p className="text-secondary">
-              {hasil.alasan}
-            </p>
-          </div>
-
-          <hr />
-
-          {/* Informasi yang Diperiksa */}
-          <h5 className="fw-bold">Informasi yang Diperiksa</h5>
-
-          <p>
-            <strong>Jenis pemeriksaan:</strong> {jenis}
-          </p>
-
-          <div className="bg-light rounded-3 p-3 mb-4">
-            <p className="mb-0 text-break">{data}</p>
-          </div>
-
-          {/* Saran */}
-          <h5 className="fw-bold">Apa yang Harus Dilakukan?</h5>
-
-          <ul className="text-secondary">
-            {hasil.saran.map((item, index) => (
-              <li key={index} className="mb-2">
-                {item}
-              </li>
-            ))}
-          </ul>
-
-          {/* Status Penyimpanan */}
-          {pesanPenyimpanan && (
-            <div className={`alert ${
-              pesanPenyimpanan.includes('berhasil disimpan')
-                ? 'alert-success'
-                : 'alert-warning'
-            } mt-4`}>
-              {pesanPenyimpanan}
+                <p>
+                    Berikut hasil analisis awal berdasarkan informasi
+                    yang kamu berikan.
+                </p>
             </div>
-          )}
 
-          {/* Peringatan */}
-          <div className="alert alert-warning mt-4">
-            <strong>Catatan penting:</strong>
-            <br />
-            Hasil ini berasal dari pemeriksaan pola kata sederhana,
-            bukan analisis AI atau verifikasi keamanan menyeluruh.
-            Status Belum Terindikasi tidak menjamin informasi aman.
-          </div>
+            {/* Status */}
+            <div className={`result-card result-${statusClass}`}>
 
-          <button
-            className="btn btn-primary w-100 py-3"
-            onClick={onKembali}
-          >
-            ← Periksa Informasi Lain
-          </button>
+                <div className="result-status-section">
 
+                    <div className="result-status-icon">
+                        <i className={`bi ${ikon}`}></i>
+                    </div>
+
+                    <span className="result-status-label">
+                        HASIL ANALISIS
+                    </span>
+
+                    <div className="result-status-badge">
+                        {hasil.status?.toUpperCase()}
+                    </div>
+
+                    <h3>{judul}</h3>
+
+                    <p>{deskripsi}</p>
+
+                </div>
+
+                {/* Alasan */}
+                <div className="result-section">
+
+                    <div className="result-section-heading">
+                        <span className="result-section-icon">
+                            <i className="bi bi-search"></i>
+                        </span>
+
+                        <div>
+                            <h4>Mengapa mendapatkan hasil ini?</h4>
+                            <p>Hal-hal yang ditemukan dalam analisis.</p>
+                        </div>
+                    </div>
+
+                    {alasan.length > 0 ? (
+                        <ul className="result-list">
+                            {alasan.map((item, index) => (
+                                <li key={index}>
+                                    <i className="bi bi-check2-circle"></i>
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="result-empty">
+                            Tidak ada alasan tambahan yang diberikan.
+                        </p>
+                    )}
+
+                </div>
+
+                <div className="result-divider"></div>
+
+                {/* Informasi yang diperiksa */}
+                <div className="result-section">
+
+                    <div className="result-section-heading">
+                        <span className="result-section-icon">
+                            <i className="bi bi-file-earmark-text"></i>
+                        </span>
+
+                        <div>
+                            <h4>Informasi yang Diperiksa</h4>
+                            <p>Detail informasi yang kamu masukkan.</p>
+                        </div>
+                    </div>
+
+                    <div className="result-info-type">
+                        <span>Jenis pemeriksaan</span>
+                        <strong>{jenis}</strong>
+                    </div>
+
+                    <div className="result-data-box">
+                        <p>{data}</p>
+                    </div>
+
+                </div>
+
+                <div className="result-divider"></div>
+
+                {/* Saran */}
+                <div className="result-section">
+
+                    <div className="result-section-heading">
+                        <span className="result-section-icon">
+                            <i className="bi bi-lightbulb"></i>
+                        </span>
+
+                        <div>
+                            <h4>Apa yang Harus Dilakukan?</h4>
+                            <p>Ikuti saran berikut untuk menjaga keamananmu.</p>
+                        </div>
+                    </div>
+
+                    {saran.length > 0 ? (
+                        <div className="result-advice-list">
+                            {saran.map((item, index) => (
+                                <div className="result-advice-item" key={index}>
+                                    <span>{index + 1}</span>
+                                    <p>{item}</p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="result-empty">
+                            Tidak ada saran tambahan yang diberikan.
+                        </p>
+                    )}
+
+                </div>
+
+                {/* Penyimpanan riwayat */}
+                {pesanPenyimpanan && (
+                    <div className={`result-save-message ${
+                        pesanPenyimpanan.includes('berhasil disimpan')
+                            ? 'success'
+                            : 'warning'
+                    }`}>
+                        <i className={`bi ${
+                            pesanPenyimpanan.includes('berhasil disimpan')
+                                ? 'bi-check-circle-fill'
+                                : 'bi-exclamation-circle-fill'
+                        }`}></i>
+
+                        <span>{pesanPenyimpanan}</span>
+                    </div>
+                )}
+
+                {/* Catatan penting */}
+                <div className="result-disclaimer">
+                    <div className="result-disclaimer-icon">
+                        <i className="bi bi-info-circle-fill"></i>
+                    </div>
+
+                    <div>
+                        <strong>Catatan Penting</strong>
+
+                        <p>
+                            Hasil ini merupakan analisis awal menggunakan
+                            AI berdasarkan informasi yang diberikan.
+                            Analisis AI tidak menjamin keamanan suatu
+                            pesan atau website secara menyeluruh.
+                            Status Belum Terindikasi bukan berarti
+                            informasi tersebut pasti aman.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Tombol kembali */}
+                <button
+                    type="button"
+                    className="result-back-button"
+                    onClick={onKembali}
+                >
+                    <i className="bi bi-arrow-left"></i>
+                    Periksa Informasi Lain
+                </button>
+
+            </div>
         </div>
-      </div>
-    </div>
-  )
+    )
 }
 
 export default ResultPage

@@ -1,5 +1,6 @@
 
 import { useState } from 'react'
+import './EducationPage.css'
 
 function EducationPage({ onKembali }) {
   const [materiAktif, setMateriAktif] = useState('modus')
@@ -7,7 +8,7 @@ function EducationPage({ onKembali }) {
   const materi = {
     modus: {
       judul: 'Kenali Modus Penipuan Digital',
-      deskripsi: 'Beberapa pola penipuan yang sering ditemukan dalam pesan dan komunikasi digital.',
+      deskripsi: 'Kenali berbagai pola penipuan yang sering ditemukan dalam pesan dan komunikasi digital.',
       isi: [
         {
           ikon: '🎁',
@@ -123,105 +124,150 @@ function EducationPage({ onKembali }) {
   }
 
   const pilihan = [
-    { id: 'modus', nama: 'Modus Penipuan', ikon: '🚨' },
-    { id: 'tips', nama: 'Tips Keamanan', ikon: '🛡️' },
-    { id: 'kasus', nama: 'Contoh Kasus', ikon: '📱' },
-    { id: 'laporan', nama: 'Panduan Tindakan', ikon: '📋' }
+    { id: 'modus', nama: 'Modus Penipuan', ikon: '🚨', nomor: '01' },
+    { id: 'tips', nama: 'Tips Keamanan', ikon: '🛡️', nomor: '02' },
+    { id: 'kasus', nama: 'Contoh Kasus', ikon: '📱', nomor: '03' },
+    { id: 'laporan', nama: 'Panduan Tindakan', ikon: '📋', nomor: '04' }
   ]
 
   const konten = materi[materiAktif]
+  const pilihanAktif = pilihan.find(item => item.id === materiAktif)
 
   return (
-    <div className="container py-5">
-      {/* Judul */}
-      <div className="text-center mb-5">
-        <span className="badge bg-primary-subtle text-primary px-3 py-2 mb-3">
-          Belajar Keamanan Digital
-        </span>
-
-        <h2 className="fw-bold">
-          Pusat Edukasi TamengKu
-        </h2>
-
-        <p className="text-secondary">
-          Pelajari cara mengenali dan menghindari penipuan digital.
-        </p>
-      </div>
-
-      {/* Pilihan Materi */}
-      <div className="row g-3 mb-5">
-        {pilihan.map(item => (
-          <div className="col-6 col-md-3" key={item.id}>
-            <button
-              className={`btn w-100 h-100 py-3 rounded-4 ${
-                materiAktif === item.id
-                  ? 'btn-primary'
-                  : 'btn-outline-primary'
-              }`}
-              onClick={() => setMateriAktif(item.id)}
-            >
-              <div className="fs-3 mb-2">{item.ikon}</div>
-              <div className="fw-semibold">{item.nama}</div>
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {/* Isi Materi */}
-      <div className="mx-auto" style={{ maxWidth: '850px' }}>
-        <div className="mb-4">
-          <h3 className="fw-bold">{konten.judul}</h3>
-          <p className="text-secondary">{konten.deskripsi}</p>
-        </div>
-
-        <div className="row g-3">
-          {konten.isi.map((item, index) => (
-            <div className="col-12" key={index}>
-              <div className="card border-0 shadow-sm rounded-4">
-                <div className="card-body p-4">
-                  <div className="d-flex gap-3">
-                    <div className="fs-2">{item.ikon}</div>
-
-                    <div>
-                      <h5 className="fw-bold">
-                        {item.judul}
-                      </h5>
-
-                      <p className="text-secondary mb-0">
-                        {item.deskripsi}
-                      </p>
-
-                      {item.alasan && (
-                        <div className="alert alert-warning mt-3 mb-0">
-                          <strong>Mengapa mencurigakan?</strong>
-                          <br />
-                          {item.alasan}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
+    <div className="education-page">
+      <div className="education-hero">
+        <div className="container">
+          <div className="education-hero-content">
+            <div className="education-label">
+              <i className="bi bi-mortarboard-fill"></i>
+              PUSAT EDUKASI TAMENGKU
             </div>
-          ))}
-        </div>
 
-        {/* Pengingat */}
-        <div className="alert alert-info mt-4 rounded-4">
-          <strong>Ingat!</strong>
-          <br />
-          Jangan mudah percaya pada pesan yang meminta uang,
-          password, PIN, atau kode OTP. Selalu periksa informasi
-          melalui sumber resmi.
-        </div>
+            <h1>
+              Tingkatkan Kesadaran,
+              <span> Lindungi Diri dari Penipuan Digital.</span>
+            </h1>
 
-        <button
-          className="btn btn-outline-primary w-100 mt-3"
-          onClick={onKembali}
-        >
-          ← Kembali ke Beranda
-        </button>
+            <p>
+              Pelajari cara mengenali modus penipuan, menjaga keamanan
+              informasi pribadi, dan mengambil tindakan yang tepat.
+            </p>
+
+            <div className="education-hero-info">
+              <span><i className="bi bi-book-half"></i> 4 kategori materi</span>
+              <span><i className="bi bi-shield-check"></i> Belajar lebih aman</span>
+            </div>
+          </div>
+
+          <div className="education-hero-icon">
+            <div className="education-icon-circle">
+              <i className="bi bi-shield-lock-fill"></i>
+            </div>
+            <span className="education-floating-icon education-floating-one">
+              <i className="bi bi-check-circle-fill"></i>
+            </span>
+            <span className="education-floating-icon education-floating-two">
+              <i className="bi bi-lock-fill"></i>
+            </span>
+          </div>
+        </div>
       </div>
+
+      <section className="education-content-section">
+        <div className="container">
+
+          <div className="education-section-heading">
+            <div>
+              <span className="education-eyebrow">MULAI BELAJAR</span>
+              <h2>Pilih Materi Edukasi</h2>
+              <p>Pilih topik yang ingin kamu pelajari terlebih dahulu.</p>
+            </div>
+          </div>
+
+          <div className="education-category-grid">
+            {pilihan.map(item => (
+              <button
+                key={item.id}
+                className={`education-category ${materiAktif === item.id ? 'active' : ''}`}
+                onClick={() => setMateriAktif(item.id)}
+              >
+                <div className="education-category-top">
+                  <span className="education-category-icon">{item.ikon}</span>
+                  <span className="education-category-number">{item.nomor}</span>
+                </div>
+                <div className="education-category-name">{item.nama}</div>
+                <div className="education-category-bottom">
+                  <span>{materi[item.id].isi.length} materi</span>
+                  <i className="bi bi-arrow-right"></i>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div className="education-material-header">
+            <div>
+              <span className="education-eyebrow">
+                KATEGORI {pilihanAktif.nomor}
+              </span>
+              <h2>{konten.judul}</h2>
+              <p>{konten.deskripsi}</p>
+            </div>
+            <div className="education-material-count">
+              <i className="bi bi-journal-text"></i>
+              {konten.isi.length} Materi
+            </div>
+          </div>
+
+          <div className="education-material-list">
+            {konten.isi.map((item, index) => (
+              <article className="education-material-card" key={index}>
+                <div className="education-material-icon">
+                  {item.ikon}
+                </div>
+
+                <div className="education-material-body">
+                  <div className="education-material-number">
+                    MATERI {String(index + 1).padStart(2, '0')}
+                  </div>
+
+                  <h3>{item.judul}</h3>
+                  <p>{item.deskripsi}</p>
+
+                  {item.alasan && (
+                    <div className="education-case-warning">
+                      <div className="education-case-warning-title">
+                        <i className="bi bi-exclamation-triangle-fill"></i>
+                        Mengapa mencurigakan?
+                      </div>
+                      <p>{item.alasan}</p>
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="education-reminder">
+            <div className="education-reminder-icon">
+              <i className="bi bi-lightbulb-fill"></i>
+            </div>
+            <div>
+              <h3>Ingat, selalu waspada!</h3>
+              <p>
+                Jangan mudah percaya pada pesan yang meminta uang,
+                password, PIN, atau kode OTP. Selalu periksa informasi
+                melalui sumber resmi.
+              </p>
+            </div>
+          </div>
+
+          <button className="education-back-button" onClick={onKembali}>
+            <i className="bi bi-arrow-left"></i>
+            Kembali ke Beranda
+          </button>
+
+        </div>
+      </section>
     </div>
   )
 }

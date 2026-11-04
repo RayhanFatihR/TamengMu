@@ -1,5 +1,5 @@
-
 import { useState } from 'react'
+
 import CheckPage from './pages/CheckPage'
 import HistoryPage from './pages/HistoryPage'
 import EducationPage from './pages/EducationPage'
@@ -13,6 +13,125 @@ import {
 } from './services/authService'
 
 import './App.css'
+
+// Logo TamengKu
+function ShieldLogo() {
+  return (
+    <svg
+      width="38"
+      height="42"
+      viewBox="0 0 48 52"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M24 3L43 10V23C43 35 35 44 24 49C13 44 5 35 5 23V10L24 3Z"
+        fill="#0F766E"
+      />
+      <path
+        d="M16 25L21.5 30.5L33 19"
+        stroke="white"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+// Ikon fitur
+function FeatureIcon({ type }) {
+  const icons = {
+    message: (
+      <>
+        <path d="M20 11.5C20 15.1 16.4 18 12 18C10.8 18 9.7 17.8 8.7 17.4L4 19L5.4 15.4C4.5 14.3 4 13 4 11.5C4 7.9 7.6 5 12 5C16.4 5 20 7.9 20 11.5Z" />
+        <path d="M8 11H16M8 14H13" />
+      </>
+    ),
+    link: (
+      <>
+        <path d="M10 13.5L8.5 15C6.6 16.9 3.5 16.9 1.6 15C-0.3 13.1 -0.3 10 1.6 8.1L6 3.7C7.9 1.8 11 1.8 12.9 3.7" transform="translate(3 3)" />
+        <path d="M14 10.5L15.5 9C17.4 7.1 20.5 7.1 22.4 9C24.3 10.9 24.3 14 22.4 15.9L18 20.3C16.1 22.2 13 22.2 11.1 20.3" transform="translate(-2 -2)" />
+      </>
+    ),
+    image: (
+      <>
+        <rect x="3" y="3" width="18" height="18" rx="3" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <path d="M21 15L16 10L5 21" />
+      </>
+    )
+  }
+
+  return (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {icons[type]}
+    </svg>
+  )
+}
+
+// Ilustrasi keamanan digital
+function SecurityIllustration() {
+  return (
+    <div className="security-visual">
+      <div className="visual-circle"></div>
+
+      <div className="visual-decoration decoration-one"></div>
+      <div className="visual-decoration decoration-two"></div>
+
+      <div className="security-card">
+        <div className="security-card-top">
+          <div className="security-card-label">
+            <span className="online-dot"></span>
+            Pemeriksaan Digital
+          </div>
+
+          <span className="visual-dots">•••</span>
+        </div>
+
+        <div className="big-shield">
+          <ShieldLogo />
+        </div>
+
+        <h3>Perlindungan Digital</h3>
+
+        <p>
+          Kenali potensi penipuan sebelum mengambil tindakan.
+        </p>
+
+        <div className="visual-status">
+          <span className="status-check">✓</span>
+          <span>Lebih waspada, lebih aman</span>
+        </div>
+      </div>
+
+      <div className="floating-card floating-top">
+        <span className="floating-icon">✓</span>
+        <div>
+          <strong>Periksa dahulu</strong>
+          <small>Jangan terburu-buru</small>
+        </div>
+      </div>
+
+      <div className="floating-card floating-bottom">
+        <span className="floating-icon">🛡️</span>
+        <div>
+          <strong>Kenali penipuan</strong>
+          <small>Lindungi data pribadi</small>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function App() {
   const [halaman, setHalaman] = useState('beranda')
@@ -56,7 +175,7 @@ function App() {
     setHalaman('beranda')
   }
 
-  // Halaman Login
+  // Navigasi halaman Login
   if (halaman === 'login') {
     return (
       <LoginPage
@@ -67,7 +186,7 @@ function App() {
     )
   }
 
-  // Halaman Register
+  // Navigasi halaman Register
   if (halaman === 'register') {
     return (
       <RegisterPage
@@ -78,33 +197,37 @@ function App() {
     )
   }
 
-  // Halaman selain beranda
+  // Navbar untuk halaman selain beranda
   if (halaman !== 'beranda') {
     return (
       <>
-        <nav className="navbar bg-white shadow-sm py-3">
+        <nav className="navbar navbar-expand-lg app-navbar">
           <div className="container">
-            <span className="navbar-brand fw-bold fs-3 text-primary">
-              TamengKu
-            </span>
+            <button
+              className="navbar-brand brand-logo border-0 bg-transparent"
+              onClick={() => setHalaman('beranda')}
+            >
+              <ShieldLogo />
+              <span>Tameng<span>Ku</span></span>
+            </button>
 
-            <div className="d-flex gap-2 flex-wrap">
+            <div className="d-flex flex-wrap gap-2">
               <button
-                className="btn btn-outline-primary rounded-pill"
+                className="btn btn-nav"
                 onClick={bukaRiwayat}
               >
                 Riwayat
               </button>
 
               <button
-                className="btn btn-outline-primary rounded-pill"
+                className="btn btn-nav"
                 onClick={() => setHalaman('education')}
               >
                 Edukasi
               </button>
 
               <button
-                className="btn btn-outline-primary rounded-pill"
+                className="btn btn-primary-custom"
                 onClick={() => setHalaman('beranda')}
               >
                 ← Beranda
@@ -112,14 +235,14 @@ function App() {
 
               {user ? (
                 <button
-                  className="btn btn-outline-danger rounded-pill"
+                  className="btn btn-logout"
                   onClick={handleLogout}
                 >
                   Logout
                 </button>
               ) : (
                 <button
-                  className="btn btn-primary rounded-pill"
+                  className="btn btn-primary-custom"
                   onClick={() => setHalaman('login')}
                 >
                   Login
@@ -149,18 +272,28 @@ function App() {
 
   // Halaman utama
   return (
-    <>
-      <nav className="navbar navbar-expand-lg bg-white shadow-sm py-3">
+    <div className="tamengku-app">
+
+      {/* NAVBAR */}
+      <nav className="navbar navbar-expand-lg app-navbar sticky-top">
         <div className="container">
-          <a className="navbar-brand fw-bold fs-3 text-primary" href="#beranda">
-            TamengKu
-          </a>
+
+          <button
+            className="navbar-brand brand-logo border-0 bg-transparent"
+            onClick={() => setHalaman('beranda')}
+          >
+            <ShieldLogo />
+            <span>Tameng<span>Ku</span></span>
+          </button>
 
           <button
             className="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navbarMenu"
+            aria-controls="navbarMenu"
+            aria-expanded="false"
+            aria-label="Buka navigasi"
           >
             <span className="navbar-toggler-icon"></span>
           </button>
@@ -169,7 +302,7 @@ function App() {
             <ul className="navbar-nav ms-auto align-items-lg-center gap-lg-3">
 
               <li className="nav-item">
-                <a className="nav-link" href="#beranda">
+                <a className="nav-link active" href="#beranda">
                   Beranda
                 </a>
               </li>
@@ -181,40 +314,38 @@ function App() {
               </li>
 
               <li className="nav-item">
-                <a className="nav-link" href="#tentang">
-                  Tentang Kami
+                <a className="nav-link" href="#cara-kerja">
+                  Cara Kerja
                 </a>
               </li>
 
               <li className="nav-item">
                 <button
-                  className="btn btn-outline-primary rounded-pill px-4"
-                  onClick={bukaRiwayat}
-                >
-                  Riwayat
-                </button>
-              </li>
-
-              <li className="nav-item">
-                <button
-                  className="btn btn-outline-primary rounded-pill px-4"
+                  className="btn btn-nav"
                   onClick={() => setHalaman('education')}
                 >
                   Edukasi
                 </button>
               </li>
 
+              <li className="nav-item">
+                <button
+                  className="btn btn-nav"
+                  onClick={bukaRiwayat}
+                >
+                  Riwayat
+                </button>
+              </li>
+
               {user ? (
                 <>
-                  <li className="nav-item">
-                    <span className="text-secondary small">
-                      Halo, {user.nama}
-                    </span>
+                  <li className="nav-item user-greeting">
+                    Halo, {user.nama}
                   </li>
 
                   <li className="nav-item">
                     <button
-                      className="btn btn-outline-danger rounded-pill px-4"
+                      className="btn btn-logout"
                       onClick={handleLogout}
                     >
                       Logout
@@ -225,7 +356,7 @@ function App() {
                 <>
                   <li className="nav-item">
                     <button
-                      className="btn btn-outline-primary rounded-pill px-4"
+                      className="btn btn-nav"
                       onClick={() => setHalaman('login')}
                     >
                       Login
@@ -234,7 +365,7 @@ function App() {
 
                   <li className="nav-item">
                     <button
-                      className="btn btn-primary rounded-pill px-4"
+                      className="btn btn-primary-custom"
                       onClick={() => setHalaman('register')}
                     >
                       Daftar
@@ -243,196 +374,394 @@ function App() {
                 </>
               )}
 
-              <li className="nav-item">
-                <button
-                  className="btn btn-primary rounded-pill px-4"
-                  onClick={() => setHalaman('check')}
-                >
-                  Mulai Periksa
-                </button>
-              </li>
-
             </ul>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* HERO SECTION */}
       <section className="hero-section" id="beranda">
-        <div className="container py-5">
-          <div className="row align-items-center py-5">
-            <div className="col-lg-7">
-              <span className="badge bg-primary-subtle text-primary px-3 py-2 mb-3">
-                Asisten Keamanan Digital
-              </span>
+        <div className="container">
+          <div className="row align-items-center hero-row">
 
-              <h1 className="display-4 fw-bold mb-4">
+            <div className="col-lg-6 hero-content">
+
+              <div className="hero-label">
+                <span className="hero-label-dot"></span>
+                ASISTEN KEAMANAN DIGITAL
+              </div>
+
+              <h1>
                 Jangan Mudah Tertipu,
-                <span className="text-primary">
-                  {' '}Lindungi Diri Bersama TamengKu.
-                </span>
+                <span> Kenali Sebelum Terjadi.</span>
               </h1>
 
-              <p className="lead text-secondary mb-4">
-                Bingung menerima pesan atau tautan mencurigakan?
-                Tenang, TamengKu membantu memeriksa potensi penipuan
-                digital dengan penjelasan yang mudah dipahami.
+              <p className="hero-description">
+                Pesan mencurigakan? Tautan tidak dikenal?
+                Jangan langsung percaya. TamengKu membantu
+                mengenali potensi penipuan digital dengan
+                penjelasan yang mudah dipahami.
               </p>
 
-              <button
-                onClick={() => setHalaman('check')}
-                className="btn btn-primary btn-lg rounded-pill px-4"
-              >
-                Periksa Sekarang
-              </button>
+              <div className="hero-actions">
+                <button
+                  className="btn btn-primary-custom btn-lg"
+                  onClick={() => setHalaman('check')}
+                >
+                  Mulai Pemeriksaan
+                  <span className="button-arrow">→</span>
+                </button>
 
-              <p className="text-secondary mt-3 small">
-                Gratis digunakan dan mudah dipahami oleh siapa saja.
-              </p>
-            </div>
-
-            <div className="col-lg-5 text-center mt-5 mt-lg-0">
-              <div className="hero-illustration">
-                <div className="shield-icon">🛡️</div>
-
-                <h3 className="fw-bold text-primary mt-3">
-                  Tetap Aman di Dunia Digital
-                </h3>
-
-                <p className="text-secondary">
-                  Kenali penipuan sebelum menjadi korban.
-                </p>
+                <a
+                  href="#cara-kerja"
+                  className="btn btn-secondary-custom btn-lg"
+                >
+                  Pelajari Cara Kerja
+                </a>
               </div>
+
+              <div className="hero-trust">
+                <span className="trust-check">✓</span>
+                <span>Mudah digunakan</span>
+
+                <span className="trust-divider">•</span>
+
+                <span className="trust-check">✓</span>
+                <span>Gratis digunakan</span>
+              </div>
+
             </div>
+
+            <div className="col-lg-6">
+              <SecurityIllustration />
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-5" id="fitur">
-        <div className="container py-4">
-          <div className="text-center mb-5">
-            <h2 className="fw-bold">
-              Apa yang Bisa TamengKu Lakukan?
+      {/* TRUST STRIP */}
+      <section className="trust-section">
+        <div className="container">
+          <div className="row g-3 text-center">
+
+            <div className="col-md-4">
+              <div className="trust-item">
+                <span className="trust-item-icon">💬</span>
+                <div>
+                  <strong>Periksa Pesan</strong>
+                  <small>Kenali pesan mencurigakan</small>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-4">
+              <div className="trust-item">
+                <span className="trust-item-icon">🔗</span>
+                <div>
+                  <strong>Periksa Tautan</strong>
+                  <small>Lebih waspada sebelum membuka</small>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-4">
+              <div className="trust-item">
+                <span className="trust-item-icon">📷</span>
+                <div>
+                  <strong>Periksa Gambar</strong>
+                  <small>Analisis teks dari screenshot</small>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section className="features-section" id="fitur">
+        <div className="container">
+
+          <div className="section-heading">
+            <span className="section-label">FITUR TAMENGKU</span>
+
+            <h2>
+              Satu Langkah Kecil untuk
+              <span> Keamanan Digital</span>
             </h2>
 
-            <p className="text-secondary">
-              Beberapa cara sederhana untuk membantu melindungi Anda.
+            <p>
+              Gunakan TamengKu untuk membantu mengenali
+              berbagai bentuk potensi penipuan digital.
             </p>
           </div>
 
           <div className="row g-4">
-            <div className="col-md-4">
-              <div className="card feature-card h-100 border-0 shadow-sm p-4">
-                <div className="feature-icon">💬</div>
-                <h4 className="fw-bold mt-3">Periksa Pesan</h4>
-                <p className="text-secondary mb-0">
-                  Periksa isi SMS atau pesan WhatsApp yang terasa mencurigakan.
+
+            <div className="col-lg-4 col-md-6">
+              <div className="feature-card">
+                <div className="feature-icon feature-teal">
+                  <FeatureIcon type="message" />
+                </div>
+
+                <span className="feature-number">01 / PESAN</span>
+
+                <h3>Periksa Pesan</h3>
+
+                <p>
+                  Masukkan isi SMS atau percakapan WhatsApp
+                  yang mencurigakan untuk mendapatkan analisis.
                 </p>
+
+                <button
+                  className="feature-link"
+                  onClick={() => setHalaman('check')}
+                >
+                  Coba fitur ini <span>→</span>
+                </button>
               </div>
             </div>
 
-            <div className="col-md-4">
-              <div className="card feature-card h-100 border-0 shadow-sm p-4">
-                <div className="feature-icon">🔗</div>
-                <h4 className="fw-bold mt-3">Periksa Tautan</h4>
-                <p className="text-secondary mb-0">
-                  Periksa tautan sebelum Anda membuka website yang tidak dikenal.
+            <div className="col-lg-4 col-md-6">
+              <div className="feature-card">
+                <div className="feature-icon feature-blue">
+                  <FeatureIcon type="link" />
+                </div>
+
+                <span className="feature-number">02 / TAUTAN</span>
+
+                <h3>Periksa Tautan</h3>
+
+                <p>
+                  Periksa teks tautan yang tidak dikenal
+                  untuk mengetahui indikasi potensi penipuan.
                 </p>
+
+                <button
+                  className="feature-link"
+                  onClick={() => setHalaman('check')}
+                >
+                  Coba fitur ini <span>→</span>
+                </button>
               </div>
             </div>
 
-            <div className="col-md-4">
-              <div className="card feature-card h-100 border-0 shadow-sm p-4">
-                <div className="feature-icon">📷</div>
-                <h4 className="fw-bold mt-3">Periksa Screenshot</h4>
-                <p className="text-secondary mb-0">
-                  Unggah gambar percakapan atau bukti pesan untuk diperiksa.
+            <div className="col-lg-4 col-md-6">
+              <div className="feature-card">
+                <div className="feature-icon feature-orange">
+                  <FeatureIcon type="image" />
+                </div>
+
+                <span className="feature-number">03 / GAMBAR</span>
+
+                <h3>Periksa Screenshot</h3>
+
+                <p>
+                  Unggah screenshot percakapan atau pesan.
+                  Sistem membantu membaca teks untuk dianalisis.
                 </p>
+
+                <button
+                  className="feature-link"
+                  onClick={() => setHalaman('check')}
+                >
+                  Coba fitur ini <span>→</span>
+                </button>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="how-section py-5" id="tentang">
-        <div className="container py-4">
-          <div className="text-center mb-5">
-            <h2 className="fw-bold">
-              Mudah Digunakan, Hanya 3 Langkah
-            </h2>
-
-            <p className="text-secondary">
-              Tidak perlu menjadi ahli teknologi untuk menggunakan TamengKu.
-            </p>
-          </div>
-
-          <div className="row g-4 text-center">
-            <div className="col-md-4">
-              <div className="step-number">1</div>
-              <h5 className="fw-bold mt-3">Masukkan Pesan</h5>
-              <p className="text-secondary">
-                Masukkan pesan, tautan, atau unggah screenshot.
-              </p>
-            </div>
-
-            <div className="col-md-4">
-              <div className="step-number">2</div>
-              <h5 className="fw-bold mt-3">Tunggu Pemeriksaan</h5>
-              <p className="text-secondary">
-                TamengKu akan membantu menganalisis informasi tersebut.
-              </p>
-            </div>
-
-            <div className="col-md-4">
-              <div className="step-number">3</div>
-              <h5 className="fw-bold mt-3">Lihat Hasilnya</h5>
-              <p className="text-secondary">
-                Dapatkan hasil pemeriksaan dan saran tindakan selanjutnya.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-5">
+      {/* HOW IT WORKS */}
+      <section className="how-section" id="cara-kerja">
         <div className="container">
-          <div className="cta-section text-center p-5 rounded-4">
-            <h2 className="fw-bold mb-3">
-              Jangan Tunggu Sampai Menjadi Korban!
+
+          <div className="section-heading">
+            <span className="section-label">CARA KERJA</span>
+
+            <h2>
+              Mudah Digunakan,
+              <span> Hanya 3 Langkah</span>
             </h2>
 
-            <p className="mb-4">
-              Periksa pesan mencurigakan sebelum mengambil tindakan.
+            <p>
+              Tidak perlu menjadi ahli teknologi.
+              Ikuti langkah sederhana berikut.
             </p>
+          </div>
 
-            <button
-              onClick={() => setHalaman('check')}
-              className="btn btn-light btn-lg rounded-pill px-4"
-            >
-              Mulai Pemeriksaan
-            </button>
+          <div className="row g-4 steps-row">
+
+            <div className="col-md-4">
+              <div className="step-card">
+                <div className="step-number">01</div>
+                <div className="step-symbol">📝</div>
+
+                <h3>Masukkan Informasi</h3>
+
+                <p>
+                  Masukkan pesan, tautan, atau unggah
+                  screenshot yang ingin diperiksa.
+                </p>
+              </div>
+            </div>
+
+            <div className="col-md-4">
+              <div className="step-card">
+                <div className="step-number">02</div>
+                <div className="step-symbol">🔍</div>
+
+                <h3>Proses Pemeriksaan</h3>
+
+                <p>
+                  TamengKu menggunakan AI untuk membantu
+                  menganalisis informasi yang diberikan.
+                </p>
+              </div>
+            </div>
+
+            <div className="col-md-4">
+              <div className="step-card">
+                <div className="step-number">03</div>
+                <div className="step-symbol">🛡️</div>
+
+                <h3>Pahami Hasilnya</h3>
+
+                <p>
+                  Pelajari hasil analisis, alasan,
+                  dan saran tindakan selanjutnya.
+                </p>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="footer-section py-4">
-        <div className="container text-center">
-          <h4 className="fw-bold text-primary">TamengKu</h4>
+      {/* EDUCATION SECTION */}
+      <section className="education-promo">
+        <div className="container">
+          <div className="education-box">
 
-          <p className="text-secondary mb-2">
-            Asisten AI Edukatif untuk Mendeteksi Penipuan Digital.
-          </p>
+            <div className="education-content">
+              <span className="section-label">BELAJAR KEAMANAN DIGITAL</span>
 
-          <small className="text-secondary">
-            © 2026 TamengKu. Lindungi Diri, Kenali Penipuan.
-          </small>
+              <h2>
+                Lebih Mengenal Penipuan,
+                <span> Lebih Siap Melindungi Diri.</span>
+              </h2>
+
+              <p>
+                Tingkatkan pengetahuan tentang berbagai modus
+                penipuan digital dan pelajari cara menghindarinya.
+              </p>
+
+              <button
+                className="btn btn-primary-custom"
+                onClick={() => setHalaman('education')}
+              >
+                Pelajari Edukasi <span>→</span>
+              </button>
+            </div>
+
+            <div className="education-visual">
+              <div className="education-shield">
+                <ShieldLogo />
+              </div>
+              <div className="education-circle"></div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="cta-section">
+        <div className="container">
+
+          <div className="cta-box">
+            <div className="cta-decoration"></div>
+
+            <div className="cta-content">
+              <span className="cta-label">JAGA DIRI DI DUNIA DIGITAL</span>
+
+              <h2>
+                Jangan Tunggu Sampai
+                Menjadi Korban.
+              </h2>
+
+              <p>
+                Periksa pesan mencurigakan sebelum
+                mengambil keputusan.
+              </p>
+
+              <button
+                className="btn btn-cta"
+                onClick={() => setHalaman('check')}
+              >
+                Mulai Pemeriksaan <span>→</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="footer-section">
+        <div className="container">
+
+          <div className="row g-4">
+
+            <div className="col-lg-6">
+              <div className="footer-brand">
+                <ShieldLogo />
+                <span>Tameng<span>Ku</span></span>
+              </div>
+
+              <p className="footer-description">
+                Asisten AI edukatif untuk membantu masyarakat
+                mengenali potensi penipuan digital.
+              </p>
+            </div>
+
+            <div className="col-lg-3 col-6">
+              <h5>Navigasi</h5>
+              <a href="#beranda">Beranda</a>
+              <a href="#fitur">Fitur</a>
+              <a href="#cara-kerja">Cara Kerja</a>
+            </div>
+
+            <div className="col-lg-3 col-6">
+              <h5>Layanan</h5>
+
+              <button onClick={() => setHalaman('check')}>
+                Pemeriksaan
+              </button>
+
+              <button onClick={() => setHalaman('education')}>
+                Edukasi
+              </button>
+
+              <button onClick={bukaRiwayat}>
+                Riwayat
+              </button>
+            </div>
+
+          </div>
+
+          <div className="footer-bottom">
+            <span>© 2026 TamengKu. Semua hak dilindungi.</span>
+            <span>Lindungi Diri, Kenali Penipuan.</span>
+          </div>
+
         </div>
       </footer>
-    </>
+
+    </div>
   )
 }
 

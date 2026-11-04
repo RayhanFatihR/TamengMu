@@ -1,0 +1,474 @@
+
+/* ==============================
+   CHECK PAGE
+================================ */
+
+.check-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 65px 20px 90px;
+    color: #173b39;
+}
+
+/* Header */
+
+.check-header {
+    max-width: 680px;
+    margin: 0 auto 40px;
+}
+
+.check-header-icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    border-radius: 20px;
+    background: #e2f5f1;
+    color: #119b83;
+    font-size: 30px;
+}
+
+.check-eyebrow,
+.check-step {
+    display: inline-block;
+    color: #139b84;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.check-header h2 {
+    margin: 12px 0;
+    color: #153d39;
+    font-size: clamp(30px, 5vw, 43px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+.check-header h2 span {
+    color: #139b84;
+}
+
+.check-header p {
+    color: #71817f;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+/* Main Card */
+
+.check-card {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 38px;
+    border: 1px solid #e5eeec;
+    border-radius: 24px;
+    background: #ffffff;
+    box-shadow: 0 15px 50px rgba(22, 69, 63, 0.07);
+}
+
+.check-card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.check-card-heading h4,
+.check-input-heading h4 {
+    margin: 8px 0 5px;
+    color: #183d39;
+    font-size: 20px;
+    font-weight: 750;
+}
+
+.check-card-heading p {
+    margin: 0;
+    color: #84918f;
+    font-size: 14px;
+}
+
+.check-heading-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: #e9f7f3;
+    color: #139b84;
+    font-size: 22px;
+}
+
+/* Type Selection */
+
+.check-type-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.check-type {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 17px 12px;
+    border: 1px solid #e5eeec;
+    border-radius: 15px;
+    background: #ffffff;
+    text-align: left;
+    transition: 0.2s ease;
+}
+
+.check-type:hover {
+    border-color: #8ed5c8;
+    background: #f7fcfa;
+}
+
+.check-type.active {
+    border: 1.5px solid #159c85;
+    background: #effaf7;
+}
+
+.check-type-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #edf5f3;
+    color: #159c85;
+    font-size: 20px;
+}
+
+.check-type.active .check-type-icon {
+    background: #d8f1ea;
+}
+
+.check-type-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.check-type-text strong {
+    color: #244540;
+    font-size: 14px;
+}
+
+.check-type-text small {
+    color: #84918f;
+    font-size: 11px;
+}
+
+.check-selected {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #159c85;
+    font-size: 14px;
+}
+
+.check-divider {
+    height: 1px;
+    margin: 30px 0;
+    background: #edf1f0;
+}
+
+/* Input */
+
+.check-input-heading {
+    margin-bottom: 18px;
+}
+
+.check-textarea {
+    min-height: 150px;
+    padding: 16px;
+    border: 1px solid #dfe9e6;
+    border-radius: 13px;
+    color: #244540;
+    font-size: 15px;
+    line-height: 1.7;
+    resize: vertical;
+}
+
+.check-textarea:focus,
+.check-url-input .form-control:focus {
+    border-color: #159c85;
+    box-shadow: 0 0 0 4px rgba(21, 156, 133, 0.1);
+}
+
+.check-textarea::placeholder {
+    color: #a0adaa;
+}
+
+.check-field-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+    color: #8a9996;
+    font-size: 12px;
+}
+
+/* URL Input */
+
+.check-url-input {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 15px;
+    border: 1px solid #dfe9e6;
+    border-radius: 13px;
+    color: #159c85;
+    font-size: 22px;
+}
+
+.check-url-input .form-control {
+    border: none;
+    box-shadow: none;
+    padding: 12px 0;
+    font-size: 15px;
+}
+
+.check-url-input .form-control:focus {
+    border: none;
+    box-shadow: none;
+}
+
+/* Upload */
+
+.check-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 35px 20px;
+    border: 2px dashed #b9ded5;
+    border-radius: 16px;
+    background: #f8fcfa;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.check-upload-area:hover {
+    border-color: #159c85;
+    background: #effaf7;
+}
+
+.check-upload-area input {
+    display: none;
+}
+
+.check-upload-icon {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    background: #dff3ed;
+    color: #159c85;
+    font-size: 28px;
+}
+
+.check-upload-area strong {
+    color: #244540;
+    font-size: 15px;
+}
+
+.check-upload-area span {
+    margin-top: 7px;
+    color: #84918f;
+    font-size: 13px;
+}
+
+.check-upload-area small {
+    margin-top: 12px;
+    color: #159c85;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.check-loading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #eff8fc;
+    color: #327d98;
+    font-size: 14px;
+}
+
+.check-ocr-result {
+    margin-top: 22px;
+}
+
+.check-ocr-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 12px;
+    color: #159c85;
+}
+
+.check-ocr-result small {
+    display: block;
+    margin-top: 9px;
+    color: #84918f;
+}
+
+/* Security Tip */
+
+.check-security-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin: 25px 0;
+    padding: 17px;
+    border: 1px solid #dceee9;
+    border-radius: 13px;
+    background: #f4faf8;
+}
+
+.check-tip-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #dff2eb;
+    color: #159c85;
+    font-size: 19px;
+}
+
+.check-security-tip strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #28544b;
+    font-size: 13px;
+}
+
+.check-security-tip p {
+    margin: 0;
+    color: #758984;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* Error */
+
+.check-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 14px;
+    border: 1px solid #f3d0d0;
+    border-radius: 12px;
+    background: #fff5f5;
+    color: #c34c4c;
+    font-size: 14px;
+}
+
+/* Submit */
+
+.check-submit {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 13px;
+    background: #159c85;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.check-submit:hover:not(:disabled) {
+    background: #107e6d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(21, 156, 133, 0.2);
+}
+
+.check-submit:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.check-disclaimer {
+    margin: 14px 0 0;
+    color: #9aa6a3;
+    font-size: 11px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+    .check-page {
+        padding: 40px 15px 65px;
+    }
+
+    .check-header {
+        margin-bottom: 30px;
+    }
+
+    .check-header h2 {
+        font-size: 31px;
+    }
+
+    .check-header p {
+        font-size: 14px;
+    }
+
+    .check-card {
+        padding: 23px 18px;
+        border-radius: 19px;
+    }
+
+    .check-type-list {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .check-type {
+        padding: 13px;
+    }
+
+    .check-type-text strong {
+        font-size: 14px;
+    }
+
+    .check-type-text small {
+        font-size: 12px;
+    }
+
+    .check-field-footer {
+        flex-wrap: wrap;
+    }
+
+    .check-card-heading h4,
+    .check-input-heading h4 {
+        font-size: 18px;
+    }
+}
